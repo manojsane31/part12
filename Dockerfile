@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16 AS build-stage
 
 USER node
   
@@ -6,8 +6,12 @@ WORKDIR /usr/src/app
 
 COPY --chown=node:node . .
 
-RUN npm ci 
+ENV REACT_APP_BACKEND_URL=todo-backend:*
 
-ENV DEBUG=todo-backend:*
+RUN npm ci
 
-CMD npm start
+RUN npm run build
+
+RUN npm install -g serve
+
+CMD ["serve", "build"]
